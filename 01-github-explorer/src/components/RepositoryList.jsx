@@ -1,21 +1,35 @@
+import React from "react";
 import { RepositoryItem } from "./RepositoryItem";
 
+import "../styles/repositories.scss";
+
+// https://api.github.com/orgs/rocketseat/repos
+
 export function RepositoryList() {
-  const repository = {
-    repository: "unform2",
-    description: "Forms in Reacts",
-    link: "https://github.com/unform/unform",
-  };
+  const [repositories, setRepositories] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch("https://api.github.com/orgs/rocketseat/repos")
+      .then((res) => res.json())
+      .then((data) => setRepositories(data));
+  }, []);
 
   return (
     <section className="repository-list">
       <h1>Lista de repositórios</h1>
 
       <ul>
-        <RepositoryItem {...repository} />
-        <RepositoryItem {...repository} />
-        <RepositoryItem {...repository} />
-        <RepositoryItem {...repository} />
+        {repositories &&
+          repositories.map((repository) => {
+            return (
+              <RepositoryItem
+                key={repository.id}
+                repository={repository.name}
+                description={repository.description}
+                link={repository.html_url}
+              />
+            );
+          })}
       </ul>
     </section>
   );
